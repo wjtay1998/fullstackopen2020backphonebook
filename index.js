@@ -1,5 +1,3 @@
-// Website: https://warm-harbor-79996.herokuapp.com/
-
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
