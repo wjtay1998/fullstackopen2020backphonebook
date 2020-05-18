@@ -99,6 +99,20 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
+app.put('/api/persons/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const person = persons.find(person => person.id === id)
+  const update = request.body
+  if(person) {
+    console.log('put entered', update)
+    persons = persons.map(person => person.id === id ? update : person)
+    response.json(person)
+  } else {
+    console.log('put failed')
+    response.status(404).end()
+  }
+})
+
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
