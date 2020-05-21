@@ -4,9 +4,8 @@ const morgan = require('morgan')
 const app = express()
 const cors = require('cors')
 const Person = require('./models/person')
-const mongodb = require('mongodb')
 
-morgan.token('body', function (req, res) { return JSON.stringify(req.body) })
+morgan.token('body', function (req) { return JSON.stringify(req.body) })
 const customMorgan = morgan(':method :url :status :res[content-length] - :response-time ms :body')
 
 app.use(express.json())
@@ -20,14 +19,14 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-  Person.find({}).then(persons =>{
+  Person.find({}).then(persons => {
     res.json(persons)
   })
 })
 
 // Making use of mongoDB ID now
 // const generateId = () => {
-//   const newID = Math.round(Math.random() * 1000)  
+//   const newID = Math.round(Math.random() * 1000)
 //   return newID
 // }
 
@@ -37,8 +36,8 @@ app.post('/api/persons', (request, response, next) => {
 
   // using mongoDB validation to take over
   // if (!body.name || !body.number) {
-  //   return response.status(400).json({ 
-  //     error: 'the name or number is missing' 
+  //   return response.status(400).json({
+  //     error: 'the name or number is missing'
   //   })
   // }
 
@@ -60,7 +59,7 @@ app.get('/info', (request, response) => {
       <br />
       <p>${new Date()}</p>`)
   })
-  
+
 })
 
 // this id is based on MongoDB ID
@@ -85,7 +84,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response) => {
   const id = String(request.params.id)
   //persons = persons.filter(person => person.id !== id)
-  Person.deleteOne({ _id : id}).then(
+  Person.deleteOne({ _id: id }).then(
     response.status(204).end()
   )
 })
@@ -95,19 +94,21 @@ app.put('/api/persons/:id', (request, response, next) => {
   const id = String(request.params.id)
   const toUpdate = request.body
   console.log('update', request.params.id)
-  Person.findOneAndUpdate({ "_id" : id},{
+  Person.findOneAndUpdate({ '_id': id }, {
     id: toUpdate.id,
     name: toUpdate.name,
     number: toUpdate.number,
-    date: new Date()}, {runValidators: true, context: 'query', returnNewDocument: true})
+    date: new Date()
+  }, { runValidators: true, context: 'query', returnNewDocument: true })
     .then(
       savedPerson => {
-        response.json(savedPerson)}
+        response.json(savedPerson)
+      }
     )
     .catch(error => next(error))
 })
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, request, response) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {

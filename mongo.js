@@ -31,10 +31,10 @@ if(process.argv[3]){
   })
 }else{
   console.log('retrieving all entries')
-  Person.find({}).then(persons => { 
+  Person.find({}).then(persons => {
     persons.forEach(person => {
       console.log(`${person.name} ${person.number}`)
-    })  
+    })
     mongoose.connection.close()
   })
 }
